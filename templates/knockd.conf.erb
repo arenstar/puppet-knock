@@ -1,10 +1,10 @@
 [options]
         Interface = <%= @interface %>
-	<% if @syslog != true -%>
-            logfile = <%= @logfile %>
-        <% else -%>
-            UseSyslog
-        <% end -%>
+<% if @syslog != true -%>
+        logfile = <%= @logfile %>
+<% else -%>
+        UseSyslog
+<% end -%>
 
 [opencloseSSH]
         sequence      = <%= @sequence %>
