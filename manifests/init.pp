@@ -4,7 +4,7 @@
 # Install, enable and configure the knock daemon.
 #
 # Parameters:
-Ã#
+#
 #  $sequence:
 #    the sequence of ports and protocol knock expects
 #  $interface:
