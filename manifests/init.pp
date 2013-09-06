@@ -60,7 +60,7 @@ class knock (
             ensure      => running,
             enable      => true,
             hasrestart  => true,
-            require     => Package['package'];
+            require     => Package['knock-server'];
     }
 
     # Main configuration file
