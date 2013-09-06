@@ -60,7 +60,7 @@ class knock (
             ensure      => running,
             enable      => true,
             hasrestart  => true,
-            require     => Class['knock::package'];
+            require     => Package['package'];
     }
 
     # Main configuration file
