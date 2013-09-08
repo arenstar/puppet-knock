@@ -7,6 +7,11 @@ rvm:
 
 script:
   - 'rake spec'
+  
+matrix:
+  exclude:
+    - rvm: 2.0.0
+      env: PUPPET_GEM_VERSION="~> 2.7.0"
 
 env:
   - PUPPET_VERSION="2.7"
