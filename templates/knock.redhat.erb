@@ -1,0 +1,104 @@
+#!/bin/sh
+#
+# chkconfig: - 85 15
+# description: Knock is a port-knocking server/client.
+# processname: knockd
+# config: /etc/knockd.conf
+# pidfile: /var/run/knockd.pid
+
+# Script Author: Simon Matter <simon.matter@invoca.ch>
+# Version: 2004041500
+
+# Source function library.
+if [ -f /etc/init.d/functions ]; then
+  . /etc/init.d/functions
+elif [ -f /etc/rc.d/init.d/functions ] ; then
+  . /etc/rc.d/init.d/functions
+else
+  exit 0
+fi
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ ${NETWORKING} = "no" ] && exit 0
+
+# This is our service name
+BASENAME=`basename $0`
+if [ -L $0 ]; then
+  BASENAME=`find $0 -name $BASENAME -printf %l`
+  BASENAME=`basename $BASENAME`
+fi
+
+[ -f /etc/${BASENAME}.conf ] || exit 1
+
+OPTIONS=""
+
+# Source service configuration.
+if [ -f /etc/sysconfig/$BASENAME ]; then
+  . /etc/sysconfig/$BASENAME
+else
+  echo "$BASENAME: configfile /etc/sysconfig/$BASENAME does NOT exist !"
+  exit 1
+fi
+
+RETVAL=0
+
+start() {
+  echo -n $"Starting $BASENAME: "
+  daemon /usr/sbin/$BASENAME -d $OPTIONS
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$BASENAME
+  return $RETVAL
+}
+
+stop() {
+  echo -n $"Shutting down $BASENAME: "
+  killproc $BASENAME
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$BASENAME
+  return $RETVAL
+}
+
+restart() {
+  stop
+  start
+}
+
+rhstatus() {
+  status $BASENAME
+}
+
+condrestart() {
+  [ -e /var/lock/subsys/$BASENAME ] && restart || :
+}
+
+# See how we were called.
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  reload)
+    restart
+    ;;
+  condrestart)
+    condrestart
+    ;;
+  status)
+    rhstatus
+    ;;
+  *)
+    echo $"Usage: $BASENAME {start|stop|restart|reload|condrestart|status}"
+    RETVAL=1
+esac
+
+exit $RETVAL
