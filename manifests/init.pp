@@ -60,15 +60,16 @@ class knock (
             ensure      => running,
             enable      => true,
             hasrestart  => true,
-            require     => File['/etc/init.d/knock'];
+            require     => File['/etc/init.d/knockd'];
     }
 
-    file { '/etc/init.d/knock':
+    file { '/etc/init.d/knockd':
         ensure  => file,
         owner   => 'root',
         group   => 'root',
         mode    => '0755',
-        content => template("knock/etc/init.d/knock.redhat.erb"),
+        content => template("${module_name}/knockd.redhat.erb"),
+        require => Package['knock'];
     }
   
     # Main configuration file
