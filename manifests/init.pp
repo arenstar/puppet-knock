@@ -49,10 +49,10 @@ class knock (
 ) {
 
     # Main packages and service it provides
+    if $::osfamily == 'RedHat' {
+    
     package {
         'knock':
-            ensure => installed;
-        'knock-server':
             ensure => installed;
     }
     service {
@@ -60,9 +60,17 @@ class knock (
             ensure      => running,
             enable      => true,
             hasrestart  => true,
-            require     => Package['knock-server'];
+            require     => File['/etc/init.d/knock'];
     }
 
+    file { '/etc/init.d/knock':
+        ensure  => file,
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0755',
+        content => template("knock/etc/init.d/knock.redhat.erb"),
+    }
+  
     # Main configuration file
     file {
         '/etc/knockd.conf':
