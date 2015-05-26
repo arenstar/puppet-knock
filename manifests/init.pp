@@ -51,39 +51,40 @@ class knock (
     # Main packages and service it provides
     if $::osfamily == 'RedHat' {
     
-    package {
-        'knock':
-            ensure => installed;
-    }
-    service {
-        'knockd':
-            ensure      => running,
-            enable      => true,
-            hasrestart  => true,
-            require     => File['/etc/init.d/knockd'];
-    }
+        package {
+            'knock':
+                ensure => installed;
+        }
+        
+        service {
+            'knockd':
+                ensure      => running,
+                enable      => true,
+                hasrestart  => true,
+                require     => File['/etc/init.d/knockd'];
+        }
 
-    file { '/etc/init.d/knockd':
-        ensure  => file,
-        owner   => 'root',
-        group   => 'root',
-        mode    => '0755',
-        content => template("${module_name}/knockd.redhat.erb"),
-        require => Package['knock'];
-    }
-  
-    # Main configuration file
-    file {
-        '/etc/knockd.conf':
+        file { '/etc/init.d/knockd':
+            ensure  => file,
             owner   => 'root',
             group   => 'root',
-            mode    => '0700',
-            content => template("${module_name}/knockd.conf.erb"),
-            notify  => Service['knockd'];
+            mode    => '0755',
+            content => template("${module_name}/knockd.redhat.erb"),
+            require => Package['knock'];
+        }
+  
+        # Main configuration file
+        file {
+            '/etc/knockd.conf':
+                owner   => 'root',
+                group   => 'root',
+                mode    => '0700',
+                content => template("${module_name}/knockd.conf.erb"),
+                notify  => Service['knockd'];
+        }
+        # Logrotate for our custom log file
+        file { '/etc/logrotate.d/knockd':
+            content => template("${module_name}/knockd-logrotate.erb"),
+        }
     }
-    # Logrotate for our custom log file
-    file { '/etc/logrotate.d/knockd':
-        content => template("${module_name}/knockd-logrotate.erb"),
-    }
-
 }
