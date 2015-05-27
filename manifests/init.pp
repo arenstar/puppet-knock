@@ -64,13 +64,21 @@ class knock (
                 require     => File['/etc/init.d/knockd'];
         }
 
-        file { '/etc/init.d/knockd':
-            ensure  => file,
-            owner   => 'root',
-            group   => 'root',
-            mode    => '0755',
-            content => template("${module_name}/knockd.redhat.erb"),
-            require => Package['knock'];
+        file { 
+            '/etc/init.d/knockd':
+                ensure  => file,
+                owner   => 'root',
+                group   => 'root',
+                mode    => '0755',
+                content => template("${module_name}/knockd.redhat.erb"),
+                require => Package['knock'];
+            '/etc/sysconfig/knockd':
+                ensure  => file,
+                owner   => 'root',
+                group   => 'root',
+                mode    => '0644',
+                content => '#OPTIONS=""',
+                require => Package['knock'];
         }
   
         # Main configuration file
